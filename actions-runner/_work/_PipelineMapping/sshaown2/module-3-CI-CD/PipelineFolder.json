@@ -1,0 +1,12 @@
+﻿{
+  "repositoryName": "sshaown2/module-3-CI-CD",
+  "pipelineDirectory": "module-3-CI-CD",
+  "workspaceDirectory": "module-3-CI-CD\\module-3-CI-CD",
+  "repositories": {
+    "sshaown2/module-3-CI-CD": {
+      "repositoryPath": "module-3-CI-CD\\module-3-CI-CD",
+      "lastRunOn": "05/30/2025 09:26:37 +06:00"
+    }
+  },
+  "lastRunOn": "05/30/2025 09:32:14 +06:00"
+}

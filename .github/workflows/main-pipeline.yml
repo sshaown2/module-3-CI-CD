@@ -14,10 +14,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3  # Action for checkout repository code
 
-     #   - name: Setup Node.js
-     #     uses: actions/setup-node@v3
-     #     with:
-     #       node-version: '20'  # Node.js version 20
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '20'  # Node.js version 20
 
      #   - name: Install dependencies
      #     run: npm install      # Install Node.js dependencies
