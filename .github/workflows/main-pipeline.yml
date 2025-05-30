@@ -81,7 +81,8 @@ jobs:
           npm install -g pm2 # Install PM2 globally if not already installed
           pm2 start server.js --name "node-app" # Start your application using PM2
           pm2 save # Save PM2 process list to restart on boot
-        env:
+        
+        #env:
           # Define any environment variables your application needs here
           # For example: NODE_ENV: production
           # PORT: 3000
