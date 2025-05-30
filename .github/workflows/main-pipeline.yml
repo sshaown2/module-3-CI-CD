@@ -1,52 +1,89 @@
-name: Assignment on module-3 on CI/CD Pipeline
+name: Node.js CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main # Trigger the workflow on pushes to the main branch
 
 jobs:
   test:
     name: Test Application
-    runs-on: self-hosted
+    runs-on: ubuntu-latest # Run the test job on a GitHub-hosted runner
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Action to checkout your repository code
 
-      - name: Run tests and capture results in package.json will create 'test-results.txt'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify the Node.js version to use (updated to 20)
+
+      - name: Install dependencies
+        run: npm install # Install Node.js project dependencies
+
+      - name: Run tests and capture results
+        # The 'test' script in package.json will create 'test-results.txt'
         run: npm test
 
-       - name: Upload test results artifact
-           uses: actions/upload-artifact@v3
+      - name: Upload test results artifact
+        uses: actions/upload-artifact@v4
         with:
-           name: test-results # Name of the artifact
-           path: test-results.txt # Path to the file to upload
- 
+          name: test-results # Name of the artifact
+          path: test-results.txt # Path to the file to upload
+
   deploy:
     name: Deploy to Self-Hosted Runner
     needs: test # This job depends on the 'test' job succeeding
-    runs-on: self-hosted # self-hosted runner
+    runs-on: [self-hosted, nodejs-runner] # Use your self-hosted runner with a specific label
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Download test results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results # Name of the artifact to download
+          path: ./downloaded-artifacts # Directory where the artifact will be downloaded
 
-      # download test results 
-     #    - name: Download test results
-     #      uses: actions/download-artifact@v3
-      #     with:
-      #       name: test-results
+      - name: Display downloaded test results
+        run: cat ./downloaded-artifacts/test-results.txt # Display the content of the downloaded file
 
-      # show test results 
-       #  - name: Show test results
-        #   run: cat test-results/results.txt
+      - name: Checkout repository for deployment
+        uses: actions/checkout@v4 # Checkout the code on the self-hosted runner
 
-       # - name: Install production dependencies
-       #   run: npm install --omit=dev # Install only production dependencies
+      - name: Set up Node.js on self-hosted runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Ensure Node.js is set up on the runner (updated to 20)
 
+      - name: Install dependencies for deployment
+        run: npm install # Install dependencies on the self-hosted runner
 
-       # - name: Stop previous application
-       #   run: pm2 delete app || true
+      - name: Stop existing application (if running)
+        # This step assumes you are using PM2 to manage your Node.js application.
+        # If not using PM2, you might need a different command to stop the process.
+        # For Windows, use 'taskkill /IM node.exe /F' if not using PM2.
+        # For Linux, use 'pkill node' if not using PM2.
+        run: |
+          if command -v pm2 &> /dev/null; then
+            pm2 stop all || true # Stop all PM2 processes, '|| true' prevents failure if no processes are running
+            pm2 delete all || true # Delete all PM2 processes
+          else
+            echo "PM2 not found. Manual stop/start might be needed."
+            # For Linux: pkill node || true
+            # For Windows: taskkill /IM node.exe /F || true
+          fi
+        shell: bash # Ensure bash is used for conditional logic
 
-       # - name: Start application with pm2
-       #   run: pm2 start index.js --name app
+      - name: Start Node.js application with PM2
+        # Install PM2 globally if not already installed on the self-hosted runner
+        # npm install -g pm2
+        run: |
+          npm install -g pm2 # Install PM2 globally if not already installed
+          pm2 start server.js --name "node-app" # Start your application using PM2
+          pm2 save # Save PM2 process list to restart on boot
+        env:
+          # Define any environment variables your application needs here
+          # For example: NODE_ENV: production
+          # PORT: 3000
+          # Ensure these are configured on your self-hosted runner or passed via environment variables
+          # This example assumes the app listens on a default port or 3000
