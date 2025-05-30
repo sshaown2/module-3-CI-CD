@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     name: Test Application
-    runs-on: 'self-hosted', 'Windows', 'X64' # Run the test job on self hosted
+    runs-on: self-hosted  # Run the test job on self hosted: 'self-hosted', 'Windows', 'X64'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3  # Action for checkout repository code
@@ -36,7 +36,7 @@ jobs:
   deploy:
     name: Deploy to Self-Hosted Runner
     needs: test # This job depends on the 'test' job succeeding
-    runs-on: 'self-hosted', 'Windows', 'X64'  # self-hosted runner
+    runs-on: self-hosted # self-hosted runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
