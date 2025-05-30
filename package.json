@@ -3,8 +3,7 @@
   "version": "1.0.0",
 
   "scripts": {
-    "start": "node src/server.js",
-	"test": "echo \"Running dummy tests...\" && echo \"All tests passed!\" > test-results.txt"
+    "start": "node src/server.js",	
     "check": "mocha test/**/*.test.js",
     "dev": "node src/server.js"
   },

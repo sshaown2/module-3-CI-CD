@@ -1,38 +1,21 @@
-const express = require('express');
-const path = require('path');
-const fileURLToPath = require('url');
-// import path from 'path';
-// import { fileURLToPath } from 'url';
+// Import the built-in 'http' module
+const http = require('http');
 
-// __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
+// Define the hostname and port the server will listen on
+const hostname = '127.0.0.1'; // This is the local loopback address
+const port = 3000;
 
-const app = express();
-const port = process.env.PORT || 3000;
+// Create an HTTP server
+const server = http.createServer((req, res) => {
+  // Set the response HTTP header with status code 200 (OK) and content type 'text/plain'
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // Send the response body "Hello, World!"
+  res.end('Hello, World!\n');
 });
 
-app.get('/api', (req, res) => {
-  res.json({ message: 'Hello World' });
+
+// Start the server and listen on the specified hostname and port
+server.listen(port, hostname, () => {
+  console.log('Server running at http://${hostname}:${port}/');
 });
-
-let server;
-
-// if (import.meta.url === new URL(import.meta.resolve('./server.js')).href) {
-//   server = app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-//   });
-// }
-
-if (require.main === module) {
-  // If the file is run directly, start the server
-  const PORT = process.env.PORT || 3000;
-  server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
-
-module.exports = app
