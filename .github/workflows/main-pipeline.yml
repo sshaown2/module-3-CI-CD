@@ -1,6 +1,5 @@
 name: Assignment on module-3 on CI/CD Pipeline
 
-Steps:
 on:
   push:
     branches: [main]
@@ -10,11 +9,10 @@ on:
 jobs:
   test:
     name: Test Application
-    runs-on: ubuntu-latest # Run the test job on a GitHub-hosted runner
+    runs-on: self-hosted # Run the test job on self hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3  # Action for checkout repository code
-
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -22,12 +20,12 @@ jobs:
           node-version: '20'  # Node.js version 20
 
       - name: Install dependencies
-        run: npm install      # Install Node.js
+        run: npm install      # Install Node.js dependencies
 
       - name: Run tests and capture results
         run: |
           mkdir -p test-results
-          npm test > test-results/results.txt || true
+          npm test > test-results/results.txt # Remove '|| true' to fail on test failure
 
       - name: Upload test results
         uses: actions/upload-artifact@v3
@@ -38,23 +36,27 @@ jobs:
   deploy:
     name: Deploy to Self-Hosted Runner
     needs: test # This job depends on the 'test' job succeeding
-    runs-on: [self-hosted, linux, x64]
+    runs-on: self-hosted # self-hosted runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Download test results
-        uses: actions/download-artifact@v3
-        with:
-          name: test-results
+      # download test results 
+       - name: Download test results
+         uses: actions/download-artifact@v3
+         with:
+           name: test-results
 
-      - name: Show test results
-        run: cat test-results/results.txt
+      # show test results 
+       - name: Show test results
+         run: cat test-results/results.txt
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install production dependencies
+        run: npm install --omit=dev # Install only production dependencies
 
-      - name: Start application
-        run: |
-          pm2 delete app || true
-          pm2 start index.js --name app
+
+      - name: Stop previous application
+        run: pm2 delete app || true
+
+      - name: Start application with pm2
+        run: pm2 start index.js --name app
