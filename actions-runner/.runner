@@ -1,0 +1,11 @@
+﻿{
+  "agentId": 2,
+  "agentName": "IFTEKHAR",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelinesghubeus15.actions.githubusercontent.com/YGAd4nr2vILkVwIJhXvZyr2EdxUxfkfKdAEY13qAj4wUYl1svH/",
+  "gitHubUrl": "https://github.com/sshaown2/module-3-CI-CD",
+  "workFolder": "_work",
+  "useV2Flow": true,
+  "serverUrlV2": "https://broker.actions.githubusercontent.com/"
+}
