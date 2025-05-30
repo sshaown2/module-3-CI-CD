@@ -9,25 +9,16 @@ on:
 jobs:
   test:
     name: Test Application
-    runs-on: self-hosted, Windows, X64  # Run the test job on self hosted: 'self-hosted', 'Windows', 'X64'
+    runs-on: self-hosted
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3  # Action for checkout repository code
+        uses: actions/checkout@v3
 
-        #- name: Setup Node.js
-        #  uses: actions/setup-node@v3
-        #  with:
-        #    node-version: '20'  # Node.js version 20
-
-        #   - name: Install dependencies
-        #     run: npm install      # Install Node.js dependencies
-     
-      - name: Run tests and capture results
-        # The 'test' script in package.json will create 'test-results.txt'
+      - name: Run tests and capture results in package.json will create 'test-results.txt'
         run: npm test
 
        - name: Upload test results artifact
-         uses: actions/upload-artifact@v3
+           uses: actions/upload-artifact@v3
         with:
            name: test-results # Name of the artifact
            path: test-results.txt # Path to the file to upload
