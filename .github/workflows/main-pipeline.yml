@@ -19,8 +19,18 @@ jobs:
      #     with:
      #       node-version: '20'  # Node.js version 20
 
-        - name: Install dependencies
-          run: npm install      # Install Node.js dependencies
+     #   - name: Install dependencies
+     #     run: npm install      # Install Node.js dependencies
+     
+     - name: Run tests and capture results
+        # The 'test' script in package.json will create 'test-results.txt'
+        run: npm test
+
+      - name: Upload test results artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results # Name of the artifact
+          path: test-results.txt # Path to the file to upload
 
      #   - name: Run tests and capture results
      #     run: |
