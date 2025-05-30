@@ -1,0 +1,60 @@
+name: Assignment on module-3 on CI/CD Pipeline
+
+Steps:
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test Application
+    runs-on: ubuntu-latest # Run the test job on a GitHub-hosted runner
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Action for checkout repository code
+
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Node.js version 20
+
+      - name: Install dependencies
+        run: npm install      # Install Node.js
+
+      - name: Run tests and capture results
+        run: |
+          mkdir -p test-results
+          npm test > test-results/results.txt || true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results/results.txt
+
+  deploy:
+    name: Deploy to Self-Hosted Runner
+    needs: test # This job depends on the 'test' job succeeding
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download test results
+        uses: actions/download-artifact@v3
+        with:
+          name: test-results
+
+      - name: Show test results
+        run: cat test-results/results.txt
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start application
+        run: |
+          pm2 delete app || true
+          pm2 start index.js --name app
